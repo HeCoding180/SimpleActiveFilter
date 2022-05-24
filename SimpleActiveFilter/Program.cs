@@ -50,13 +50,14 @@
 				filterEngine = new ActiveFilterEngine(ftype, Ra, Rb, Ca, Cb);
 			}
 
-			string csvOutputString = "Frequency;Output Gain, Phase Shift\n";
+			string csvOutputString = "Frequency,Output Gain,Phase Shift\n";
 
 			for (int fDecade = 1; fDecade <= 10000000/*10MHz*/; fDecade *= 10)
 			{
 				for (double fDecadeOffset = 1; fDecadeOffset <= 9; fDecadeOffset += 1)
 				{
-					csvOutputString += (fDecade * fDecadeOffset).ToString() + ";" + filterEngine.GetGain(fDecade * fDecadeOffset).ToString() + ";" + filterEngine.GetPhase(fDecade * fDecadeOffset).ToString() + "\n";
+					double actualFrequency = (fDecade * fDecadeOffset);
+					csvOutputString += actualFrequency.ToString() + "," + filterEngine.GetGain(actualFrequency).ToString() + "," + ActiveFilterEngine.RadToDeg(filterEngine.GetPhase(actualFrequency)).ToString() + "\n";	
 				}
 			}
 

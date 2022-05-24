@@ -118,19 +118,20 @@ namespace SimpleActiveFilter
 
         public double GetPhase(double frequency)
         {
-            return GetLogarythmicDerivative(GetGain, frequency);
+            double logSpectrum = 10;
+            //double fLog = Math.Log10(frequency);                //Logarythmic representation of the derivative frequency
+            //double fPre = Math.Pow(10, fLog - 0.001);     //Logarythmically 99.9% of the derivative frequency
+            //double fPost = Math.Pow(10, fLog + 0.001);    //Logarythmically 100.1% of the derivative frequency
+            double fSpectrumFactor = 1.001;
+            double fPre = frequency / fSpectrumFactor;
+            double fPost = frequency * fSpectrumFactor;
+
+            Console.WriteLine("deltaVu (@f=" + frequency + "Hz)= " + (GetDecibels(GetGain(fPost)) - GetDecibels(GetGain(fPre))).ToString() + "\n");
+
+            return 0.5f * Math.PI * (GetDecibels(GetGain(fPost)) - GetDecibels(GetGain(fPre))) / (fPost / fPre);
         }
 
         //Private Utility Methods
-        private double GetLogarythmicDerivative(Func<double, double> referenceFunction, double frequency)
-        {
-            double fLog = Math.Log10(frequency);                //Logarythmic representation of the derivative frequency
-            double fPre = Math.Pow(10, fLog - fLog / 1000);     //Logarythmically 99.9% of the derivative frequency
-            double fPost = Math.Pow(10, fLog + fLog / 1000);    //Logarythmically 100.1% of the derivative frequency
-            double fDelta = fPost - fPre;
-
-            return (referenceFunction(fPost) - referenceFunction(fPre)) / fDelta;
-        }
 
         public static double PythagoricTheorem(double a, double b)
         {
@@ -141,6 +142,10 @@ namespace SimpleActiveFilter
         public static double RadToDeg(double rad)
         {
             return rad / Math.PI * 180;
+        }
+        public static double GetDecibels(double value)
+        {
+            return 10 * Math.Log10(value);
         }
     }
 }

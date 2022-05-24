@@ -1,0 +1,15 @@
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\bin\Debug\net6.0\SimpleActiveFilter.exe
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\bin\Debug\net6.0\SimpleActiveFilter.deps.json
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\bin\Debug\net6.0\SimpleActiveFilter.runtimeconfig.json
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\bin\Debug\net6.0\SimpleActiveFilter.dll
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\bin\Debug\net6.0\SimpleActiveFilter.pdb
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\SimpleActiveFilter.csproj.AssemblyReference.cache
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\SimpleActiveFilter.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\SimpleActiveFilter.AssemblyInfoInputs.cache
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\SimpleActiveFilter.AssemblyInfo.cs
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\SimpleActiveFilter.csproj.CoreCompileInputs.cache
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\SimpleActiveFilter.dll
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\refint\SimpleActiveFilter.dll
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\SimpleActiveFilter.pdb
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\SimpleActiveFilter.genruntimeconfig.cache
+C:\Users\plasm\source\repos\SimpleActiveFilter\SimpleActiveFilter\obj\Debug\net6.0\ref\SimpleActiveFilter.dll

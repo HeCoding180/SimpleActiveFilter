@@ -23,26 +23,114 @@ namespace SimpleActiveFilter
     {
         public FilterType filterType { set; get; }
 
-        //Attributes for 
+        //Attributes for the OpAmp Characteristics
         public bool UseFiniteOpenLoopGain { set; get; }
-        public double UnityGainFrequency { set; get; }
-        public double OpenLoopGain { set; get; }
+        private double _fu { set; get; }
+        private double _A { set; get; }
+        public double UnityGainBandwidth
+        {
+            set
+            {
+                if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
+                    _fu = value;
+                else
+                    throw new ArgumentOutOfRangeException(value.ToString() + "Hz is an invalid frequency");
+            }
+            get
+            {
+                return _fu;
+            }
+        }
+        public double OpenLoopGain
+        {
+            set
+            {
+                if ((value >= 1.0f) && double.IsFinite(value) && (!double.IsNaN(value)))
+                    _A = value;
+                else
+                    throw new ArgumentOutOfRangeException(value.ToString() + "V/V is an invalid gain");
+            }
+            get
+            {
+                return _A;
+            }
+        }
 
-        //Part Attributes
-        public double ResistorA { set; get; }   //Resistance, for the lowpass characteristic
-        public double CapacitorA { set; get; }  //Capacitance, for the lowpass characteristic
-        public double ResistorB { set; get; }   //Resistance, for the highpass characteristic
-        public double CapacitorB { set; get; }  //Capacitance, for the highpass characteristic
+        //Private Part Attributes
+        private double _ra { set; get; }        //Resistance, for the lowpass characteristic
+        private double _ca { set; get; }        //Capacitance, for the lowpass characteristic
+        private double _rb { set; get; }        //Resistance, for the highpass characteristic
+        private double _cb { set; get; }        //Capacitance, for the highpass characteristic
+
+        //Public Part Attributes
+        public double ResistorA                 //Resistance, for the lowpass characteristic
+        {
+            set
+            {
+                if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
+                    _ra = value;
+                else
+                    throw new ArgumentOutOfRangeException(value.ToString() + "Ω is an invalid resistance");
+            }
+            get
+            {
+                return _ra;
+            }
+        }
+        public double CapacitorA                //Capacitance, for the lowpass characteristic
+        {
+            set
+            {
+                if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
+                    _ca = value;
+                else
+                    throw new ArgumentOutOfRangeException(value.ToString() + "F is an invalid capacitance");
+            }
+            get
+            {
+                return _ca;
+            }
+        }
+        public double ResistorB                 //Resistance, for the highpass characteristic
+        {
+            set
+            {
+                if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
+                    _rb = value;
+                else
+                    throw new ArgumentOutOfRangeException(value.ToString() + "Ω is an invalid resistance");
+            }
+            get
+            {
+                return _rb;
+            }
+        }
+        public double CapacitorB                //Capacitance, for the highpass characteristic
+        {
+            set
+            {
+                if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
+                    _cb = value;
+                else
+                    throw new ArgumentOutOfRangeException(value.ToString() + "F is an invalid capacitance");
+            }
+            get
+            {
+                return _cb;
+            }
+        }
 
         //Constructors
         public ActiveFilterEngine(FilterType type)
         {
             UseFiniteOpenLoopGain = false;
             filterType = type;
-            ResistorA = 0.0f;
-            ResistorB = 0.0f;
-            CapacitorA = 0.0f;
-            CapacitorB = 0.0f;
+            ResistorA = 1.0f;
+            ResistorB = 1.0f;
+            CapacitorA = 1.0f;
+            CapacitorB = 1.0f;
+            UnityGainBandwidth = 100000000;     //100MHz
+            OpenLoopGain = 100000;              //100kV/V
         }
         public ActiveFilterEngine(FilterType type, double Ra, double Rb, double Ca, double Cb)
         {
@@ -52,8 +140,10 @@ namespace SimpleActiveFilter
             ResistorB = Rb;
             CapacitorA = Ca;
             CapacitorB = Cb;
+            UnityGainBandwidth = 100000000;     //100MHz
+            OpenLoopGain = 100000;              //100kV/V
         }
-        public ActiveFilterEngine(FilterType type, double Ra, double Rb, double Ca, double Cb, double fUnityGain, double AOL)
+        public ActiveFilterEngine(FilterType type, double Ra, double Rb, double Ca, double Cb, double fu, double AOL)
         {
             UseFiniteOpenLoopGain = true;
             filterType = type;
@@ -61,11 +151,17 @@ namespace SimpleActiveFilter
             ResistorB = Rb;
             CapacitorA = Ca;
             CapacitorB = Cb;
-            UnityGainFrequency = fUnityGain;
-            OpenLoopGain = AOL;
+            if ((fu > 0) && double.IsFinite(fu) && (!double.IsNaN(fu)))
+                UnityGainBandwidth = fu;
+            else
+                UnityGainBandwidth = 100000000; //100MHz
+            if ((AOL > 0) && double.IsFinite(AOL) && (!double.IsNaN(AOL)))
+                OpenLoopGain = AOL;
+            else
+                OpenLoopGain = 100000;          //100kV/V
         }
-
-        //Calculation Methods (private)
+        
+        //Private Calculation Methods
         private double GetZa(double frequency)
         {
             double result;
@@ -98,47 +194,40 @@ namespace SimpleActiveFilter
             }
             return result;
         }
-
-        private double GetGainBandwidthProduct(double frequency)
+        
+        //Public Calculation Methods
+        public double GetGainBandwidthProduct(double frequency)
         {
-            return 1 / (1 / OpenLoopGain + frequency / UnityGainFrequency);
+            return 1 / (1 / OpenLoopGain + frequency / UnityGainBandwidth);                         //Returns the gain bandwidth product at a speciffic frequency
         }
 
-        private double GetBareGain(double frequency)
+        public double GetIdealGain(double frequency)
         {
             return 1 + (GetZa(frequency) / GetZb(frequency));
         }
 
-        //Calculation Methods (public)
         public double GetGain(double freqency)
         {
-            if (!UseFiniteOpenLoopGain)  return GetBareGain(freqency);                                                   //Return the bare gain of the Filter
-            else                         return 1 / (1 / GetBareGain(freqency) + 1 / GetGainBandwidthProduct(freqency)); //Return the gain including OpAmp characteristics
+            if (!UseFiniteOpenLoopGain)
+                return GetIdealGain(freqency);                                                      //Return the ideal gain of the filter
+            else
+                return Math.Sqrt(1 / (1 / Math.Pow(GetIdealGain(freqency), 2) + 1 / Math.Pow(GetGainBandwidthProduct(freqency), 2)));    //Return the gain, including OpAmp characteristics, of the filter
         }
 
         public double GetPhase(double frequency)
         {
-            double logSpectrum = 10;
-            //double fLog = Math.Log10(frequency);                //Logarythmic representation of the derivative frequency
-            //double fPre = Math.Pow(10, fLog - 0.001);     //Logarythmically 99.9% of the derivative frequency
-            //double fPost = Math.Pow(10, fLog + 0.001);    //Logarythmically 100.1% of the derivative frequency
-            double fSpectrumFactor = 1.001;
-            double fPre = frequency / fSpectrumFactor;
-            double fPost = frequency * fSpectrumFactor;
+            double fLog = Math.Log10(frequency);                                                    //Logarythmic representation of the frequency
+            double fPre = Math.Pow(10, fLog - 0.0001);
+            double fPost = Math.Pow(10, fLog + 0.0001);
 
-            Console.WriteLine("deltaVu (@f=" + frequency + "Hz)= " + (GetDecibels(GetGain(fPost)) - GetDecibels(GetGain(fPre))).ToString() + "\n");
-
-            return 0.5f * Math.PI * (GetDecibels(GetGain(fPost)) - GetDecibels(GetGain(fPre))) / (fPost / fPre);
+            return 0.5 * Math.PI * (Math.Log10(GetGain(fPost)) - Math.Log10(GetGain(fPre))) / 0.0002;
         }
 
-        //Private Utility Methods
-
+        //Public Utility Methods
         public static double PythagoricTheorem(double a, double b)
         {
             return Math.Sqrt(Math.Pow(a, 2) + Math.Pow(b, 2));
         }
-        
-        //Public Utility Methods
         public static double RadToDeg(double rad)
         {
             return rad / Math.PI * 180;

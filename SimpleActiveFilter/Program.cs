@@ -74,7 +74,7 @@
 
 			double fDecadeFactor = 1;
 
-			for (double fDecade = 1; (fDecade * fDecadeFactor) <= fMax; fDecade *= 10)
+			for (double fDecade = 1; fDecade <= fMax; fDecade *= 10)
 			{
 				for (fDecadeFactor = 1; (fDecadeFactor <= 9) && ((fDecade * fDecadeFactor) <= fMax); fDecadeFactor += fOffsetIncrement)
 				{

@@ -211,7 +211,7 @@ namespace SimpleActiveFilter
             if (!UseFiniteOpenLoopGain)
                 return GetIdealGain(freqency);                                                      //Return the ideal gain of the filter
             else
-                return Math.Sqrt(1 / (1 / Math.Pow(GetIdealGain(freqency), 2) + 1 / Math.Pow(GetGainBandwidthProduct(freqency), 2)));    //Return the gain, including OpAmp characteristics, of the filter
+                return 1 / Math.Sqrt(1 / Math.Pow(GetIdealGain(freqency), 2) + 1 / Math.Pow(GetGainBandwidthProduct(freqency), 2));    //Return the gain, including OpAmp characteristics, of the filter
         }
 
         public double GetPhase(double frequency)

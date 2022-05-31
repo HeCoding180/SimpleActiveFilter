@@ -4,9 +4,9 @@
 	{
 		public static void Main()
 		{
-			//Example Code
 			ActiveFilterEngine filterEngine;
 
+			//Example Code
 			Console.Write("Enter Filter Type [LP] for LowPass [HP] for HighPass [BP] for BandPass: ");
 			string ftypeStr = Console.ReadLine().Replace("\n", "").ToUpper();
 			FilterType ftype = FilterType.BP;

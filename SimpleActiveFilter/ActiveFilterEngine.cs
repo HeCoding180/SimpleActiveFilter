@@ -8,15 +8,9 @@ namespace SimpleActiveFilter
 {
     public enum FilterType
     {
-        HP, //High-Pass
-        LP, //Low-Pass
-        BP  //Band-Pass
-    }
-
-    public struct ComplexImpedance
-    {
-        public double Impedance;
-        public double Phi;
+        HP, //Highpass
+        LP, //Lowpass
+        BP  //Bandpass
     }
 
     public class ActiveFilterEngine
@@ -31,6 +25,7 @@ namespace SimpleActiveFilter
         {
             set
             {
+                //Check for validity of the value set
                 if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
                     _fu = value;
                 else
@@ -45,6 +40,7 @@ namespace SimpleActiveFilter
         {
             set
             {
+                //Check for validity of the value set
                 if ((value >= 1.0f) && double.IsFinite(value) && (!double.IsNaN(value)))
                     _A = value;
                 else
@@ -63,10 +59,12 @@ namespace SimpleActiveFilter
         private double _cb { set; get; }        //Capacitance, for the highpass characteristic
 
         //Public Part Attributes
-        public double ResistorA                 //Resistance, for the lowpass characteristic
+        //Resistance, for the lowpass characteristic
+        public double ResistorA
         {
             set
             {
+                //Check for validity of the value set
                 if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
                     _ra = value;
                 else
@@ -77,10 +75,12 @@ namespace SimpleActiveFilter
                 return _ra;
             }
         }
-        public double CapacitorA                //Capacitance, for the lowpass characteristic
+        //Capacitance, for the lowpass characteristic
+        public double CapacitorA
         {
             set
             {
+                //Check for validity of the value set
                 if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
                     _ca = value;
                 else
@@ -91,10 +91,12 @@ namespace SimpleActiveFilter
                 return _ca;
             }
         }
-        public double ResistorB                 //Resistance, for the highpass characteristic
+        //Resistance, for the highpass characteristic
+        public double ResistorB
         {
             set
             {
+                //Check for validity of the value set
                 if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
                     _rb = value;
                 else
@@ -105,10 +107,12 @@ namespace SimpleActiveFilter
                 return _rb;
             }
         }
-        public double CapacitorB                //Capacitance, for the highpass characteristic
+        //Capacitance, for the highpass characteristic
+        public double CapacitorB
         {
             set
             {
+                //Check for validity of the value set
                 if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
                     _cb = value;
                 else
@@ -121,10 +125,11 @@ namespace SimpleActiveFilter
         }
 
         //Constructors
-        public ActiveFilterEngine(FilterType type)
+        public ActiveFilterEngine()
         {
+            //Set default values for all attributes
             UseFiniteOpenLoopGain = false;
-            filterType = type;
+            filterType = FilterType.BP;
             ResistorA = 1.0f;
             ResistorB = 1.0f;
             CapacitorA = 1.0f;
@@ -140,6 +145,7 @@ namespace SimpleActiveFilter
             ResistorB = Rb;
             CapacitorA = Ca;
             CapacitorB = Cb;
+            //Set default values for amplifier characteristic values
             UnityGainBandwidth = 100000000;     //100MHz
             OpenLoopGain = 100000;              //100kV/V
         }
@@ -178,7 +184,6 @@ namespace SimpleActiveFilter
             }
             return result;
         }
-        
         private double GetZb(double frequency)
         {
             double result;
@@ -194,26 +199,29 @@ namespace SimpleActiveFilter
             }
             return result;
         }
-        
+
         //Public Calculation Methods
+        //Returns the gain bandwidth product approximation at a speciffic frequency
         public double GetGainBandwidthProduct(double frequency)
         {
-            return 1 / (1 / OpenLoopGain + frequency / UnityGainBandwidth);                         //Returns the gain bandwidth product at a speciffic frequency
+            return 1 / (1 / OpenLoopGain + frequency / UnityGainBandwidth);                         
         }
-
+        //Returns the gain approximation of the ideal filter
         public double GetIdealGain(double frequency)
         {
             return 1 + (GetZa(frequency) / GetZb(frequency));
         }
-
+        //Returns the gain approximation depending on weither the generated bode plot should be ideal or real
         public double GetGain(double freqency)
         {
             if (!UseFiniteOpenLoopGain)
-                return GetIdealGain(freqency);                                                      //Return the ideal gain of the filter
+                //Return the gain approximation of the ideal filter
+                return GetIdealGain(freqency);
             else
-                return 1 / Math.Sqrt(1 / Math.Pow(GetIdealGain(freqency), 2) + 1 / Math.Pow(GetGainBandwidthProduct(freqency), 2));    //Return the gain, including OpAmp characteristics, of the filter
+                //Return the gain approximation, including OpAmp characteristics, of the filter
+                return 1 / Math.Sqrt(1 / Math.Pow(GetIdealGain(freqency), 2) + 1 / Math.Pow(GetGainBandwidthProduct(freqency), 2));
         }
-
+        //Returns the phase shift approximation
         public double GetPhase(double frequency)
         {
             double fLog = Math.Log10(frequency);                                                    //Logarythmic representation of the frequency

@@ -74,6 +74,7 @@
 
 			double fDecadeFactor = 1;
 
+			//Frequency Iterator
 			for (double fDecade = 1; fDecade <= fMax; fDecade *= 10)
 			{
 				for (fDecadeFactor = 1; (fDecadeFactor <= 9) && ((fDecade * fDecadeFactor) <= fMax); fDecadeFactor += fOffsetIncrement)
@@ -83,6 +84,7 @@
 				}
 			}
 
+			//Write the Graph to the csv File
 			File.WriteAllText(filePath, csvOutputString);
 		}
 

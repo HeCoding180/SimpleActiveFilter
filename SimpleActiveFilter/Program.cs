@@ -69,7 +69,7 @@
 
 			string csvOutputString = "Frequency [Hz],Output Gain,Phase Shift[deg]\n";
 
-			double fMax = 10000000; //10MHz
+			double fMax = 100000000; //100MHz
 			double fOffsetIncrement = 1;
 
 			double fDecadeFactor = 1;

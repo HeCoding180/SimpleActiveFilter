@@ -29,6 +29,7 @@ namespace SimpleActiveFilter
                 if ((value > 0) && double.IsFinite(value) && (!double.IsNaN(value)))
                     _fu = value;
                 else
+                    UseFiniteOpenLoopGain = false;
                     throw new ArgumentOutOfRangeException(value.ToString() + "Hz is an invalid frequency");
             }
             get
@@ -44,6 +45,7 @@ namespace SimpleActiveFilter
                 if ((value >= 1.0f) && double.IsFinite(value) && (!double.IsNaN(value)))
                     _A = value;
                 else
+                    UseFiniteOpenLoopGain = false;
                     throw new ArgumentOutOfRangeException(value.ToString() + "V/V is an invalid gain");
             }
             get
@@ -157,14 +159,8 @@ namespace SimpleActiveFilter
             ResistorB = Rb;
             CapacitorA = Ca;
             CapacitorB = Cb;
-            if ((fu > 0) && double.IsFinite(fu) && (!double.IsNaN(fu)))
-                UnityGainBandwidth = fu;
-            else
-                UnityGainBandwidth = 100000000; //100MHz
-            if ((AOL > 0) && double.IsFinite(AOL) && (!double.IsNaN(AOL)))
-                OpenLoopGain = AOL;
-            else
-                OpenLoopGain = 100000;          //100kV/V
+            UnityGainBandwidth = fu;
+            OpenLoopGain = AOL;
         }
         
         //Private Calculation Methods
@@ -211,7 +207,7 @@ namespace SimpleActiveFilter
         {
             return 1 + (GetZa(frequency) / GetZb(frequency));
         }
-        //Returns the gain approximation depending on weither the generated bode plot should be ideal or real
+        //Returns the gain approximation depending on whether the generated bode plot should be ideal or real
         public double GetGain(double freqency)
         {
             if (!UseFiniteOpenLoopGain)
